@@ -1,0 +1,151 @@
+Kubilay Agi
+10/17/2017
+
+1. wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-7.6.tar.gz
+we use this command to download the file onto the seasnet
+server directly so we don't have to download it onto our own
+machine and then use scp to copy it over (which would take
+much longer)
+
+2. tar -xzvf coreutils-7.6.tar.gz
+we un-tar the file that we just downloaded
+
+cd coreutils-7.6/
+./configure --prefix=/u/cs/ugrad/kubilay/cs35L/lab3/coreutils
+
+we run the configure program and set the path
+
+make
+make install
+
+make and install the files so that they can be used
+
+cd ..
+cd bin
+
+3. export LC_ALL='en_US.UTF-8'
+./ls -l /bin/bash
+-rwxr-xr-x 1 root root 960632 2017-08-03 06:36 /bin/bash
+ 
+4. emacs bradyspatch.diff
+
+need to fix the paths in this diff file so that the patch
+is applied on the correct file
+
+mv bradyspatch.diff ../../coreutils-7.6/src/
+man patch
+cd ../..
+cd coreutils-7.7/src
+patch -p0 bradyspatch.diff
+
+this implementation just resulted in a blank line and never returned
+because the syntax was incorrect
+
+patch -p0 < bradyspatch.diff
+
+5. ./ls -l /bin/bash
+
+prints out line with the error still in it. I realised that
+this is because I had not yet run the 'make' command to
+recompile the program and have the code without the error
+
+cd ..
+this brings us to the coreutils-7.6 folder
+
+make
+
+The commands that are run because of this command:
+make  all-recursive
+make  all-recursive
+make  all-am
+make  all-recursive
+
+and a large combination of
+make[1]
+make[2]
+make[3]
+make[4]
+
+I believe that these are different threads that run
+for each number inside of the brackets
+
+The program entered and exited the directories within 
+coreutils-7.6. Some of these were necessary, for example
+the one that went inside of the directory:
+
+/w/home.15/cs/ugrad/kubilay/cs35L/lab3/coreutils-7.6/src
+
+because this is where the source code for the ls command is,
+so clearly the program needs to be run inside of this directory.
+Once the threads entered this directory, the output was:
+  CC     ls.o
+  CCLD   dir
+  CCLD   vdir
+  CCLD   ls
+
+This seems like the files being made had to do with the ls
+command that we changed
+
+However, the other directories had no files that were modified
+so running the program in those files was pretty pointless
+
+Now we check to see if the error has been fixed:
+
+./src/ls.c -l /bin/bash
+-rwxr-xr-x 1 root root 960632 Aug  3 06:36 /bin/bash
+
+So the bug has been fixed
+
+6. cd ..
+we are currently in my lab3 folder which contains both
+coreutils and coreutils-7.6, so we can test the two versions
+of ls from this directory because there is a simple path to
+both of them
+
+recently modified file test case:
+./coreutils/bin/ls -l ./comm.py
+-rwxr--r-- 1 kubilay csugrad 4578 2017-10-20 13:54 ./comm.py
+
+The unmodified ls command still prints out the date in a format
+that contains the error that we wanted to get rid of
+
+./coreutils-7.6/src/ls -l ./comm.py
+-rwxr--r-- 1 kubilay csugrad 4578 Oct 20 13:54 ./comm.py
+
+The modified version has fixed this error
+
+
+file that is at least a year old test case:
+To find out how to create the file with a time stamp
+of more than one year ago, I looked in the man page for
+touch:
+
+man touch
+
+the -t option allows us to specify a time stamp for a file 
+in the YYMMDDhhmm format
+
+touch -t 0306090420 oldfile.txt
+
+to check if the file was made with the correct time stamp,
+we will use bash's ls command:
+
+ls -l oldfile.txt 
+-rw-r--r-- 1 kubilay csugrad 0 Jun  9  2003 oldfile.txt
+
+The dates and times are correct.
+Now we can test the unmodified and modified versions of ls:
+
+
+./coreutils/bin/ls -l ./oldfile.txt 
+-rw-r--r-- 1 kubilay csugrad 0 2003-06-09 04:20 ./oldfile.txt
+
+The unmodified version is still giving us the error for this
+file that is more than one year old
+
+./coreutils-7.6/src/ls -l ./oldfile.txt 
+-rw-r--r-- 1 kubilay csugrad 0 Jun  9  2003 ./oldfile.txt
+
+the modified version of ls still works for the file that is
+more than one year old
+

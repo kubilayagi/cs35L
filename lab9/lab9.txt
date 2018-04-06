@@ -1,0 +1,344 @@
+Kubilay Agi
+UID: 304784519
+
+1. Since git is already installed on the seasnet servers, I exported the path
+to the directory in which it is installed:
+
+export PATH=/usr/local/cs/bin:$PATH
+
+Then, to retrieve the copy of the repository, I used: 
+mkdir gitroot 
+cd gitroot
+git clone git://git.savannah.gnu.org/diffutils.git
+cd diffutils
+
+2. To get the log of changes to Diffutils' master branch, we forward the
+output of the git log command into a file called git-log.txt:
+git log > git-log.txt
+
+3. The same process is used to get the list of tags used for Diffutils:
+git tag > git-tags.txt
+
+4. To find the commit that is entitled: 
+maint: quote 'like this' or "like this", not `like this'
+We use emacs to view the git-log.txt file and do a search for this text
+
+emacs git-log.txt
+C-s maint: quote 'like this' or "like this", not `like this'
+
+We find that this commit was published on Wed Jan 25 2012 by someone named Paul
+Eggert
+
+The id for this commit is:
+62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f
+
+In order to create the patch, we use the command:
+git format-patch -1 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f --stdout >
+ quote-patch.txt
+
+
+5. Since we want to apply a patch to version 3.0 later on, we will want
+our own copy of version 3.0 to fix. This means we need to use the -b option
+with the command for checkout. To see what the name of the branch was, I
+looked in both the git-log.txt and git-tag.txt files and saw that in 
+git-tag.txt, there is a line with 'v3.0' so that is what I will use for the 
+second argument of the checkout command:
+
+git checkout -b 'v3.0checkout' 'v3.0'
+
+From this command, we get the output:
+Switched to a new branch 'v3.0checkout'
+
+6. Now to apply the patch, we run the command:
+patch -p1 < quote-patch.txt
+
+After seeing some issues with trying to figure out which files should be patched
+(which were skipped by just hitting ENTER several times), we see the final output
+of the successes in patching the files:
+
+patching file ms/config.bat
+patching file ms/config.site
+Hunk #1 succeeded at 73 with fuzz 1.
+patching file po/en.po
+patching file src/analyze.c
+patching file src/cmp.c
+Hunk #1 succeeded at 36 with fuzz 1.
+Hunk #4 succeeded at 185 (offset -6 lines).
+Hunk #5 succeeded at 231 (offset -6 lines).
+Hunk #6 succeeded at 257 (offset -6 lines).
+Hunk #7 succeeded at 269 (offset -6 lines).
+Hunk #8 succeeded at 364 (offset -6 lines).
+Hunk #9 succeeded at 377 (offset -6 lines).
+patching file src/context.c
+Hunk #1 succeeded at 159 (offset 1 line).
+Hunk #2 succeeded at 289 (offset 1 line).
+Hunk #3 succeeded at 393 with fuzz 2 (offset 1 line).
+Hunk #4 succeeded at 431 (offset 1 line).
+Hunk #5 succeeded at 459 (offset 1 line).
+patching file src/diff.c
+Hunk #1 succeeded at 40 with fuzz 2 (offset -2 lines).
+Hunk #2 succeeded at 57 (offset -2 lines).
+Hunk #3 succeeded at 92 (offset -2 lines).
+Hunk #4 succeeded at 330 (offset -10 lines).
+Hunk #5 succeeded at 505 (offset -10 lines).
+Hunk #6 succeeded at 534 (offset -10 lines).
+Hunk #7 succeeded at 585 (offset -14 lines).
+Hunk #8 succeeded at 744 (offset -14 lines).
+Hunk #9 succeeded at 826 (offset -14 lines).
+Hunk #10 FAILED at 876.
+Hunk #11 FAILED at 906.
+Hunk #12 FAILED at 942.
+Hunk #13 succeeded at 960 with fuzz 2 (offset -29 lines).
+Hunk #14 succeeded at 1159 with fuzz 2 (offset -32 lines).
+3 out of 14 hunks FAILED -- saving rejects to file src/diff.c.rej
+patching file src/diff.h
+Hunk #2 succeeded at 126 with fuzz 2 (offset -13 lines).
+Hunk #3 succeeded at 202 (offset -13 lines).
+patching file src/diff3.c
+Hunk #1 succeeded at 35 (offset 1 line).
+Hunk #2 succeeded at 159 (offset 1 line).
+Hunk #3 succeeded at 316 (offset 1 line).
+Hunk #4 succeeded at 351 (offset 1 line).
+Hunk #5 succeeded at 412 (offset 1 line).
+Hunk #6 FAILED at 433.
+Hunk #7 succeeded at 460 with fuzz 2 (offset -18 lines).
+Hunk #8 succeeded at 1275 (offset -18 lines).
+Hunk #9 succeeded at 1475 (offset -18 lines).
+1 out of 9 hunks FAILED -- saving rejects to file src/diff3.c.rej
+patching file src/dir.c
+Hunk #1 succeeded at 84 (offset -1 lines).
+Hunk #2 succeeded at 125 (offset -1 lines).
+Hunk #3 succeeded at 154 (offset -1 lines).
+Hunk #4 succeeded at 234 (offset -1 lines).
+patching file src/ifdef.c
+patching file src/io.c
+patching file src/sdiff.c
+Hunk #2 succeeded at 92 (offset 1 line).
+Hunk #3 succeeded at 175 (offset 23 lines).
+Hunk #4 succeeded at 230 (offset 17 lines).
+Hunk #5 succeeded at 286 (offset 17 lines).
+Hunk #6 succeeded at 572 (offset 13 lines).
+Hunk #7 succeeded at 747 (offset 41 lines).
+patching file src/side.c
+patching file src/system.h
+Hunk #2 succeeded at 105 (offset 6 lines).
+patching file src/util.c
+Hunk #4 succeeded at 190 with fuzz 2.
+Hunk #8 succeeded at 650 (offset -27 lines).
+patching file tests/help-version
+Hunk #1 succeeded at 75 (offset 1 line).
+Hunk #2 succeeded at 85 (offset 1 line).
+Hunk #3 succeeded at 96 (offset 1 line).
+Hunk #4 succeeded at 108 (offset 1 line).
+Hunk #5 succeeded at 140 (offset 1 line).
+Hunk #6 succeeded at 188 (offset 1 line).
+
+
+The issues that we had when patching these files was with src/diff.c
+in Hunks #10-12 and src/diff3.c in Hunk #6
+
+7. From git status we get the output:
+
+# On branch v3.0checkout
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#   modified:   NEWS
+#   modified:   README
+#   modified:   TODO
+#   modified:   doc/diagmeet.note
+#   modified:   ms/config.bat
+#   modified:   ms/config.site
+#   modified:   po/en.po
+#   modified:   src/analyze.c
+#   modified:   src/cmp.c
+#   modified:   src/context.c
+#   modified:   src/diff.c
+#   modified:   src/diff.h
+#   modified:   src/diff3.c
+#   modified:   src/dir.c
+#   modified:   src/ifdef.c
+#   modified:   src/io.c
+#   modified:   src/sdiff.c
+#   modified:   src/side.c
+#   modified:   src/system.h
+#   modified:   src/util.c
+#   modified:   tests/help-version
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#   NEWS.orig
+#   README-hacking.orig
+#   README-hacking.rej
+#   README.orig
+#   README.rej
+#   cfg.mk.orig
+#   cfg.mk.rej
+#   git-log.txt
+#   git-tags.txt
+#   ms/config.site.orig
+#   quote-patch.txt
+#   src/cmp.c.orig
+#   src/context.c.orig
+#   src/diff.c.orig
+#   src/diff.c.rej
+#   src/diff.h.orig
+#   src/diff3.c.orig
+#   src/diff3.c.rej
+#   src/dir.c.orig
+#   src/sdiff.c.orig
+#   src/system.h.orig
+#   src/util.c.orig
+#   tests/help-version.orig
+no changes added to commit (use "git add" and/or "git commit -a")
+
+8. 
+
+9. The files that we can revert to their original form without any restrictions
+are the non .c files, which are NEWS, README, TODO, doc/diagmeet.note, 
+ms/config.bat, ms/config.site, po/en.po, src/diff.h, src/system.h, and 
+tests/help-version
+
+To revert the changes, we can open each of these files in emacs and use
+vc-revert (C-x v u). This command will revert the files to their previous
+versions
+
+emacs NEWS
+C-x v u
+emacs README
+C-x v u	
+emacs TODO
+C-x v u	
+emacs doc/diagmeet.note
+C-x v u	
+emacs ms/config.bat
+C-x v u	
+emacs ms/config.site
+C-x v u	
+emacs po/en.po
+C-x v u	
+emacs src/diff.h
+C-x v u	
+emacs src/system.h
+C-x v u	
+emacs tests/help-version
+C-x v u	
+
+To change the .c files, I opened each one with emacs and used vc-diff (C-x v =)
+to see the changes. Then I used diff-goto-source (C-c C-c) within the *vc-diff*
+buffer opened by vc-diff. Then I did C-x o to get back into the *vc-diff* buffer
+and then used diff-undo-hunk (C-c C-a) to undo the changes. Each time I did this, 
+I re-ran vc-diff and saved the changes I made by reverting each change. I repeated
+this process repeatedly in each file to revert all of the changes back to their
+original version. If I needed to skip one of the hunks, then I would use
+diff-hunk-next (M-n) and then use diff-goto-source and diff-undo hunk, so that I
+could avoid having to redo the undone changes to the string constants. 
+
+
+
+The following lines were reverted for each of the programs:
+src/analyze.c - All
+src/cmp.c - 36, 364, 377
+src/context.c - All
+src/diff.c - 40, 57, 92 
+src/diff3.c - 35, 159, 1475
+src/dir.c - 84, 125, 134
+src/ifdef.c - All
+src/io.c - All
+src/sdiff.c - 35, 92, 747
+src/side.c - All
+src/util.c - 27, 121, 146, 190, 270, 650
+
+When I needed to revert all of the changes, I simply used vc-revert (C-x v u)
+
+10. The patches were rejected beacuse there were discrepancies in the line numbers
+of the patches, so I went in and manually changed these issues.
+
+diff.c and diff3.c were the files that needed to be fixed.
+
+The window was composed of two *vc-diff* buffers, one for each file.
+
+The line numbers that we need to fix for the files are the following:
+diff3: 433
+diff: 876, 906, 942
+
+For these, the string constants were changed from '' to `' which we don't
+want, so we need to change these back to ''
+
+11. To remove the untracked files from our patch, we use git clean -f 
+
+This command removes all of the untracked files. 
+
+12. Now we run git status again
+and we see that the only files that we have left that have been changed but
+not committed are:
+
+#   	    modified:   src/cmp.c
+#	    modified:   src/diff.c
+#	    modified:   src/diff3.c
+#	    modified:   src/dir.c
+#	    modified:   src/sdiff.c
+#	    modified:   src/util.c
+
+To get the patch, we run the command:
+git diff > quote-3.0-patch.txt
+
+To check that is the correct number of lines, we use:
+wc -l quote-3.0-patch.txt 
+391 quote-3.0-patch.txt
+
+Since the patch is between 300 and 400 lines long, it appears 
+that we have the correct patch. 
+
+13. Now we are going to build this new version. First I will export
+my path again before following the instructions in the README-hacking
+file.
+
+Commands used:
+export PATH=/usr/local/cs/bin:$PATH
+./bootstrap
+wget http://web.cs.ucla.edu/classes/fall17/cs35L/assign/diffutils-gets.diff
+patch -p0 < diffutils-gets.diff      
+(we need this because we are running on the lnxsrv09 server)
+./configure
+make
+make check
+
+We check to make sure that our patch worked correctly by running the following
+commands:
+
+diff . -
+output: diff: cannot compare '-' to a directory
+
+diff --help
+output: 
+FILES are 'FILE1 FILE2' or 'DIR1 DIR2' or 'DIR FILE...' or 'FILE... DIR'.
+If --from-file or --to-file is given, there are no restrictions on FILE(s).
+If a FILE is '-', read standard input.
+
+From these two ouptuts we can see that the diff program is using '' instead of ``
+
+
+14. Now we will run a sanity test. To set this up, we use the following commands
+to compare our source code against the source code of Diffutils 3.0
+
+mkdir diffutils-3.0
+mkdir diffutils-3.0-patch
+git clone ~eggert/src/gnu/diffutils diffutils-3.0-orig
+cd diffutils-3.0-orig/
+git checkout 'v3.0' -b 'orig3.0'
+cd ..
+cp diffutils/src/*.c diffutils-3.0-patch/
+diffutils/src/diff -pru diffutils-3.0 diffutils-3.0-patch > quote-3.0-test.txt
+diff quote-3.0-test.txt diffutils/quote-3.0-patch.txt 
+
+15. Comparing contents of quote-3.0-test.txt and quote-3.0-patch.txt
+
+diff -u quote-3.0-test.txt quote-3.0-patch.txt
+
+We see that there are several lines of output from this diff command. While it
+initially seems like we made an error, it appears that the lines have to do with
+the changes from `` to '', which means that our patch (hopefully) was made 
+correctly and that our patch is innocuous.

@@ -1,0 +1,43 @@
+#!/bin/bash
+
+#Get all the <td> tags
+grep '<td>.\{1,\}<\/td>' |
+
+#delete every other line (the english words)
+sed -n '1~2!p' |
+
+#delete all the <td> tags
+sed 's/<td>//g' |
+
+#delete the </td> tags
+sed 's/<\/td>//g' |
+
+#delete the <u> tags
+sed 's/<u>//g' |
+
+#delete the </u> tags
+sed 's/<\/u>//g' |
+
+#change all backticks to single quotes
+tr '`' "'" |
+
+#replace commas with newlines
+sed 's/,/\n/g' |
+
+#delete the beginnig spaces
+sed 's/^ *//g' |
+
+#replace spaces with newlines
+sed 's/ /\n/g' |
+
+#remove extra newline characters
+tr -s '\n' |
+
+#treat all uppercase letters as lowercase
+tr [:upper:] [:lower:] |
+
+#only extract words with the proper hawaiian characters
+grep "^[pk\'mnwlhaeiou]\{1,\}$" |
+
+#sort the list of words, remove duplicates
+sort -u

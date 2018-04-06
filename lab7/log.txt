@@ -1,0 +1,118 @@
+Kubilay Agi
+UID: 304784519
+
+Partner: Baolinh Nguyen
+
+First I logged into my beaglebone using the command:
+sudo ssh root@192.168.7.2
+
+from there, I set up the account information for my
+partner. I ran
+
+ssh-keygen
+
+and when I was prompted for the passphrase, I typed:
+
+passphrase: cs35l
+
+Then to set up the account, I used the follwing commands:
+
+sudo useradd -d /home/baolinh -m baolinh
+sudo passwd
+
+and I entered the very secure password of: baolinh
+
+After this, I created a directory called .ssh
+mkdir .ssh
+
+and I changed the ownership and permission so that my parter
+had full access within the directory:
+
+sudo chown -R baolinh .ssh
+sudo chmod 700 .ssh
+
+I then used cd /home/baolinh and used ifconfig to find the IP address
+
+I tried pinging my account on baolinh's beagle bone:
+ping -i2 kubilay@172.30.34.165
+
+But from here, we were getting errors that were saying we were connecting
+to an unknown host.
+
+We decided to change to the Boelter 3760 network to see if it was an issue
+with the UCLA_WIFI network
+
+connmanctl
+scan wifi
+services
+agent on
+connect wifi_23840239840 etc...
+
+Since we are on a new network, we need to update our IP addresses because
+they change when you connect to a new network:
+
+ifcongig
+
+From this command, we found that the IP address for my machine is
+10.97.85.253
+
+And the IP address for Baolinh's machine is 
+10.97.85.252
+
+Now we try again to ping each other's machine:
+ping -i2 kubilay@10.97.85.252
+
+But again, we get the error:
+ping: unknown host kubilay@10.97.85.252
+
+However, after Baolinh fixed an issue with her wifi conection,
+we ran the command:
+
+ssh-copy-id -i kubilay@10.97.85.252
+
+It worked!
+
+We are prompted if we want to continue connecting, which we do,
+
+Then we type in our passphrases for the accounts that we set up previously
+
+We get the output:
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with:   "ssh 'kubilay@10.97.85.252'"
+and check to make sure that only the key(s) you wanted were added.
+
+Following the suggested instructions from the output, I typed in
+ssh kubilay@10.97.85
+
+Then we get the prompt:
+Enter passphrase for key '/root/.ssh/id_rsa':
+
+For some reason, every time I log in or try to ssh, I am prompted to
+enter the root password. I probably messed something up when I was trying
+to set passwords. I will fix this later, it is not important to the lab.
+
+Then I was prompted for my account password:
+kubilay@10.97.85.252's password: 
+
+Which we had set up earlier. Once I typed my password in, I was logged into
+my account. To test to see if we could see each other's footprint on the
+server, we both created a file to leave for the other person:
+
+touch hey_baolinh.txt
+
+Then I logged out to see if I could see the file that she created on
+my machine:
+
+exit
+cd /home/baolinh
+ls
+
+And we can see that she left the file:
+hi_kubilay.txt
+
+On my machine, which means that it worked!!!
+
+We also modified each others files to see if the changes showed up on each
+other's machines. We both saw the change that we left for the other.

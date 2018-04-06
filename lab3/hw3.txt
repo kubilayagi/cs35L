@@ -1,0 +1,60 @@
+Kubilay Agi
+10/21/17
+
+Q1:
+case_long_iso_time_style is removed from the code because
+it appears twice and because it is a switch case, the program
+would have reached the second instance of case_long_iso_time_style.
+Although it wasn't necessary to remove it, it is best to remove
+redundant and useless code because it looks nicer and makes programs
+run faster and smoother.
+
+Q2:
+If there were people who are not familiar with the structure
+of English dates, then it may be difficult for them to adjust
+from the unpatched version of coreutils to the patched version.
+For example, if the worker wanted to change the time stamp using
+touch -t, the structure for that is different than what is displayed
+which could cause some version
+
+Q3:
+We run the following commands to get randline.py and test it
+to see what happens when we give it /dev/null as a file:
+
+wget http://web.cs.ucla.edu/classes/fall17/cs35L/assign/randline.py
+
+chmod u+x randline.py
+
+./randline.py -n1 /dev/null
+Traceback (most recent call last):
+  File "./randline.py", line 70, in <module>
+    main()
+  File "./randline.py", line 64, in main
+    sys.stdout.write(generator.chooseline())
+  File "./randline.py", line 34, in chooseline
+    return random.choice(self.lines)
+  File "/usr/lib64/python2.7/random.py", line 274, in choice
+    return seq[int(self.random() * len(seq))]  # raises IndexError if seq is empty
+IndexError: list index out of range
+
+from this error message, we can see that the program gives
+us an index error because the variable 'seq' was empty
+which presumably is the output for the function
+
+Q4:
+To see if there are any issues with running randline.py
+with python3, we first need to make it so that we can
+run the python3 command. Just using the python3 command
+without changing the alias of the command results in a 
+'command not found' error:
+
+alias python3=/usr/local/cs/bin/python3
+python3 randline.py
+
+File "randline.py", line 65
+    except IOError as (errno, strerror):
+                      ^
+SyntaxError: invalid syntax
+
+The error comes from this python tuple because
+the syntax was updated from python2 in python3.

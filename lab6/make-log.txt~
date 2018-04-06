@@ -1,0 +1,259 @@
+Kubilay Agi
+UID: 304784519
+
+rm -f *.o *.tmp 1-test.ppm 2-test.ppm 4-test.ppm 8-test.ppm srt srt.tgz
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o main.o main.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o raymath.o raymath.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o shaders.o shaders.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter -o srt main.o raymath.o shaders.o -lm
+time ./srt 1-test.ppm >1-test.ppm.tmp
+
+real 0m43.700s
+user 0m43.696s
+sys  0m0.002s
+mv 1-test.ppm.tmp 1-test.ppm
+time ./srt 2-test.ppm >2-test.ppm.tmp
+./srt: Multithreading is not supported yet.
+
+real   0m0.002s
+user   0m0.000s
+sys    0m0.001s
+make: *** [2-test.ppm] Error 1
+
+
+
+
+rm -f *.o *.tmp 1-test.ppm 2-test.ppm 4-test.ppm 8-test.ppm srt srt.tgz
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o main.o main.c
+main.c: In function ‘main’:
+main.c:183:7: warning: passing argument 1 of ‘pthread_create’ makes pointer from integer without a cast [enabled by default]
+       int test = pthread_create(pid[i], NULL, create_sphereflake_scene, sphereflake_recursion);
+       ^
+In file included from main.c:29:0:
+/usr/include/pthread.h:244:12: note: expected ‘pthread_t * restrict’ but argument is of type ‘pthread_t’
+ extern int pthread_create (pthread_t *__restrict __newthread,
+            ^
+main.c:183:7: warning: passing argument 3 of ‘pthread_create’ from incompatible pointer type [enabled by default]
+       int test = pthread_create(pid[i], NULL, create_sphereflake_scene, sphereflake_recursion);
+       ^
+In file included from main.c:29:0:
+/usr/include/pthread.h:244:12: note: expected ‘void * (*)(void *)’ but argument is of type ‘struct scene_t (*)(int)’
+ extern int pthread_create (pthread_t *__restrict __newthread,
+            ^
+main.c:183:7: warning: passing argument 4 of ‘pthread_create’ makes pointer from integer without a cast [enabled by default]
+       int test = pthread_create(pid[i], NULL, create_sphereflake_scene, sphereflake_recursion);
+       ^
+In file included from main.c:29:0:
+/usr/include/pthread.h:244:12: note: expected ‘void * restrict’ but argument is of type ‘int’
+ extern int pthread_create (pthread_t *__restrict __newthread,
+            ^
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o raymath.o raymath.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o shaders.o shaders.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter -o srt main.o raymath.o shaders.o -lm
+main.o: In function `main':
+/u/cs/ugrad/kubilay/cs35L/lab6/raytrace/srt/main.c:183: undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+make: *** [srt] Error 1
+
+
+
+
+
+
+rm -f *.o *.tmp 1-test.ppm 2-test.ppm 4-test.ppm 8-test.ppm srt srt.tgz
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o main.o main.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o raymath.o raymath.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o shaders.o shaders.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter -o srt main.o raymath.o shaders.o -lm
+main.o: In function `main':
+/u/cs/ugrad/kubilay/cs35L/lab6/raytrace/srt/main.c:287: undefined reference to `pthread_create'
+/u/cs/ugrad/kubilay/cs35L/lab6/raytrace/srt/main.c:296: undefined reference to `pthread_join'
+collect2: error: ld returned 1 exit status
+make: *** [srt] Error 1
+
+
+
+
+
+
+rm -f *.o *.tmp 1-test.ppm 2-test.ppm 4-test.ppm 8-test.ppm srt srt.tgz
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o main.o main.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o raymath.o raymath.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o shaders.o shaders.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter -o -lpthread srt main.o raymath.o shaders.o -lm
+gcc: error: srt: No such file or directory
+make: *** [srt] Error 1
+
+
+
+rm -f *.o *.tmp 1-test.ppm 2-test.ppm 4-test.ppm 8-test.ppm srt srt.tgz
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o main.o main.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o raymath.o raymath.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o shaders.o shaders.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter -o srt main.o raymath.o shaders.o -lm -lpthread
+time ./srt 1-test.ppm >1-test.ppm.tmp
+
+real 0m45.674s
+user 0m45.666s
+sys  0m0.006s
+mv 1-test.ppm.tmp 1-test.ppm
+time ./srt 2-test.ppm >2-test.ppm.tmp
+./srt: Multithreading is not supported yet.
+
+real   0m0.002s
+user   0m0.001s
+sys    0m0.000s
+make: *** [2-test.ppm] Error 1
+
+
+
+rm -f *.o *.tmp 1-test.ppm 2-test.ppm 4-test.ppm 8-test.ppm srt srt.tgz
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o main.o main.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o raymath.o raymath.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o shaders.o shaders.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter -o srt main.o raymath.o shaders.o -lm -lpthread
+time ./srt 1-test.ppm >1-test.ppm.tmp
+
+real 0m45.781s
+user 0m45.773s
+sys  0m0.006s
+mv 1-test.ppm.tmp 1-test.ppm
+time ./srt 2-test.ppm >2-test.ppm.tmp
+
+real 0m47.691s
+user 1m34.170s
+sys  0m0.004s
+mv 2-test.ppm.tmp 2-test.ppm
+time ./srt 4-test.ppm >4-test.ppm.tmp
+
+real 0m46.439s
+user 3m4.986s
+sys  0m0.007s
+mv 4-test.ppm.tmp 4-test.ppm
+time ./srt 8-test.ppm >8-test.ppm.tmp
+
+real 0m49.818s
+user 6m25.550s
+sys  0m0.020s
+mv 8-test.ppm.tmp 8-test.ppm
+for file in 1-test.ppm 2-test.ppm 4-test.ppm 8-test.ppm; do \
+  diff -u baseline.ppm $file || exit; \
+done
+--- baseline.ppm    2016-02-22 11:27:35.000000000 -0800
++++ 2-test.ppm	    2017-11-10 14:30:26.823540000 -0800
+@@ -3,12 +3,19 @@
+ 255
+ # Rendering scene with 1556 spheres and 2 lights
++255 255 255
++255 255 255
++255 255 255
++255 255 255
++
+ 194 143 42
+ 197 145 42
+ 199 147 42
+etc....
+
+
+
+
+
+rm -f *.o *.tmp 1-test.ppm 2-test.ppm 4-test.ppm 8-test.ppm srt srt.tgz
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o main.o main.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o raymath.o raymath.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o shaders.o shaders.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter -o srt main.o raymath.o shaders.o -lm -lpthread
+time ./srt 1-test.ppm >1-test.ppm.tmp
+
+real 0m46.860s
+user 0m46.851s
+sys  0m0.001s
+mv 1-test.ppm.tmp 1-test.ppm
+time ./srt 2-test.ppm >2-test.ppm.tmp
+
+real 0m48.139s
+user 1m34.411s
+sys  0m0.001s
+mv 2-test.ppm.tmp 2-test.ppm
+time ./srt 4-test.ppm >4-test.ppm.tmp
+
+real 1m12.361s
+user 4m36.123s
+sys  0m0.005s
+mv 4-test.ppm.tmp 4-test.ppm
+time ./srt 8-test.ppm >8-test.ppm.tmp
+^Cmake: *** [8-test.ppm] Interrupt
+
+
+
+
+rm -f *.o *.tmp 1-test.ppm 2-test.ppm 4-test.ppm 8-test.ppm srt srt.tgz
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o main.o main.c
+main.c: In function ‘main’:
+main.c:296:7: warning: statement with no effect [-Wunused-value]
+       threadnum[i] == i;
+       ^
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o raymath.o raymath.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o shaders.o shaders.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter -o srt main.o raymath.o shaders.o -lm -lpthread
+time ./srt 1-test.ppm >1-test.ppm.tmp
+
+real 0m0.004s
+user 0m0.000s
+sys  0m0.003s
+mv 1-test.ppm.tmp 1-test.ppm
+time ./srt 2-test.ppm >2-test.ppm.tmp
+
+real 0m26.155s
+user 0m26.138s
+sys  0m0.001s
+mv 2-test.ppm.tmp 2-test.ppm
+time ./srt 4-test.ppm >4-test.ppm.tmp
+
+real 0m11.216s
+user 0m33.627s
+sys  0m0.003s
+mv 4-test.ppm.tmp 4-test.ppm
+time ./srt 8-test.ppm >8-test.ppm.tmp
+/bin/sh: line 1: 10278 Segmentation fault      ./srt 8-test.ppm > 8-test.ppm.tmp
+
+real	 0m0.003s
+user	 0m0.005s
+sys	 0m0.001s
+make: *** [8-test.ppm] Error 139
+
+
+
+
+rm -f *.o *.tmp 1-test.ppm 2-test.ppm 4-test.ppm 8-test.ppm srt srt.tgz
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o main.o main.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o raymath.o raymath.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o shaders.o shaders.c
+gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter -o srt main.o raymath.o shaders.o -lm -lpthread
+time ./srt 1-test.ppm >1-test.ppm.tmp
+
+real 0m45.707s
+user 0m45.701s
+sys  0m0.002s
+mv 1-test.ppm.tmp 1-test.ppm
+time ./srt 2-test.ppm >2-test.ppm.tmp
+
+real 0m23.067s
+user 0m45.862s
+sys  0m0.010s
+mv 2-test.ppm.tmp 2-test.ppm
+time ./srt 4-test.ppm >4-test.ppm.tmp
+
+real 0m11.653s
+user 0m45.571s
+sys  0m0.001s
+mv 4-test.ppm.tmp 4-test.ppm
+time ./srt 8-test.ppm >8-test.ppm.tmp
+
+real 0m5.766s
+user 0m44.682s
+sys  0m0.001s
+mv 8-test.ppm.tmp 8-test.ppm
+for file in 1-test.ppm 2-test.ppm 4-test.ppm 8-test.ppm; do \
+  diff -u baseline.ppm $file || exit; \
+done

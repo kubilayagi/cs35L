@@ -1,0 +1,43 @@
+Kubilay Agi
+UID: 304784519
+
+1.) Even if the other teams had been monitoring the bytes that were sent
+across the network, they would not be able to see the data because they do
+not have the key for decrypting the data that is being sent. Thus the resulting
+network is indeed still secure. 
+
+Assumption 1:
+
+If we assume that the other teams knew what we had typed on the keyboards, the
+network would no longer be secure because they would have our passwords and
+the IP addresses of the host that we logged into. If they gained access into
+our account, they would have access to the private key, and therefore the 
+network would no longer be secure.
+
+Assumtion 2:
+If we are booting off of a USB that the other teams had possession of before,
+then our network would not be secure either because it would be possible
+for the the other teams to have changed our keys so that they know what the
+key for decrypting the bytes would be, which would mean that the network
+is no longer secure if they are monitoring the bytes because they can see
+all the data being transfered across the network.
+
+
+2.) The gpg --verify command does not really verify that I personally created
+the tar file because the signature we gave to the tar file was detached, which
+means that I could have attached my own signature to anyones file, and it 
+would still return as 'Good Signature' because the signature I give and that
+I check against were both provided by myself, even though I did not create 
+the original file. Say a package is intercepted and changed to contain
+malicious software, and this hacker uses the same signature as the original
+file had because he/she knows the sender's name and email. Then if the file
+that was intercepted, resigned and forwarded by the hacker is opened, the 
+system may become compromised, even though the verfication returned as 'Good
+Signature'.
+
+One way to fix this problem is to not use detached signatures and instead use
+attached signatures. Although this might be a bit of a hassle to remove the
+signatures from the end of the files after they are untarred, but it is more
+beneficial in the long run to have files that are transfered safely and have
+to remove a signature than to work with files that can be tampered with and
+not have to remove the signature.

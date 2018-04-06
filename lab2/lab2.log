@@ -1,0 +1,324 @@
+Kubilay Agi
+304784519
+
+1. export LC_ALL='C'
+
+2. sort /usr/share/dict/words > words
+
+3. wget http://web.cs.ucla.edu/classes/fall17/cs35L/assign/assign2.html
+
+4. tr -c 'A-Za-z' '[\n*]' < assign2.html
+
+This command takes every character that is not an uppercase or lowercase
+letter and replaces it with a new line character because the -c option
+flag indicates that you want to translate anything that isn't specified
+by the first argument into the second argument. The result is either a 
+word on a line or a newline character (which shows up blank, but pushes
+text downward.
+
+5. tr -cs 'A-Za-z' '[\n*]' < assign2.html
+
+This command puts every word on a new line and has the same result as the
+last command, except the -s option flag removes the repeated newline 
+characters so every line has exactly one word on it
+
+6. tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort
+
+This command takes the output of the previous command and sorts it in
+alphabetical order. There is a single word on each line and each word
+comes after the previous word in terms of alphabetical/lexicographical
+order
+
+7. tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u
+
+This command prints a single word on each line in lexicographical
+order, but eliminates repeated words after they have been sorted
+
+8. tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u | comm - words
+
+This command takes the output from the sorted tr and compares it 
+against the words that are contained in the words file. We see three
+columns: the first one for the words unqiue to assign2.html, the 
+second one for the words unique to 'words' and the third columns is
+list of words that they have in common with each other
+
+
+9. tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u | comm -23 - words 
+
+This command does the same things as the previous command, but it does
+not output the second or third line (designated by the -2 and -3 option
+flags). Therefore, the output is the collection of words (strings might
+be a better description here since some of them are not words) that are
+only contained in assign2.html
+
+
+
+-------- Hawaiian Words Lab -------------
+
+1. wget http://mauimapp.com/moolelo/hwnwdseng.htm
+
+2. chmod u+x buildwords.sh
+
+#Get all the <td> tags
+Since we are only trying to get the hawaiian words, which are
+all surrounded by <td> tags, we need to get all of these first
+grep '<td>.\{1,\}<\/td>' |
+
+#delete every other line (the english words)
+English words come in every other line starting
+with the first one, so this command starts with the
+first line and then deletes every other line after that
+sed -n '1~2!p' |
+
+#delete all the <td> tags
+The <td> tags should not be included in the words themselves
+and they should be deleted because html tags show up in 
+non .html formats
+sed 's/<td>//g' |
+
+#delete the </td> tags
+Every <td> tag has a closing tag that we need to delete
+sed 's/<\/td>//g' |
+
+#delete the <u> tags
+There are other tags that don't necessarily follow a pattern
+so we need to delete these explicitly
+sed 's/<u>//g' |
+
+#delete the </u> tags
+Opening tags have closing tags that need to be deleted
+sed 's/<\/u>//g' |
+
+#change all backticks to single quotes
+tr '`' "'" |
+
+#replace commas with newlines
+sed 's/,/\n/g' |
+
+#delete the beginning spaces
+All of the lines had three spaces in front of them, likely
+from the formatting of the webpage
+sed 's/^ *//g' |
+
+#replace spaces with newlines
+sed 's/ /\n/g' |
+
+#remove extra newline characters
+tr -s '\n' |
+
+#treat all uppercase letters as lowercase
+tr [:upper:] [:lower:] |
+
+#only extract words with the proper hawaiian characters
+We need to use the ^ and $ because for some reason, it won't work
+without this, I was struggling with this until I searched for a 
+reason why on stackoverflow. the issue seems to be something with
+repeating the search on the same character as far as i could tell
+grep "^[pk\'mnwlhaeiou]\{1,\}$" |
+
+#sort the list of words, remove duplicates
+sort -u
+
+
+3. We run our program using the dictionary webpage as input
+and outputting the results into the hwords file:
+
+./buildwords.sh < hwnwdseng.htm > hwords
+
+
+The following commands are the implementation of the spell checker
+
+4. 
+cat assign2.html | tr '[:upper:]' '[:lower:]' |
+tr -cs "a-z" '[\n*]' | sort -u | comm -23 - words > english
+output: 38 english
+
+5.
+cat assign2.html | tr '[:upper:]' '[:lower:]' | 
+tr -cs "pk\'mnwlhaeiou" '[\n*]' | sort -u | comm -23 - hwords > hawaiian
+output: 199 hawaiian
+
+6.
+cat english | tr '[:upper:]' '[:lower:]' | 
+tr -cs "pk\'mnwlhaeiou" '[\n*]' | sort -u | comm -12 - hwords > engNotHaw
+
+cat engNotHaw
+
+Examples of words that are misspelled in English but not Hawaiian:
+e
+halau
+i
+lau
+po
+wiki
+
+7.
+cat hawaiian | tr '[:upper:]' '[:lower:]' | tr -cs 'A-Za-z' '[\n*]' |
+comm -12 - words > hawNotEng
+
+wc -w hawNotEng
+
+output: 109 hawNotEng
+
+Examples:
+a
+ail
+ain
+ake
+al
+ale
+alen
+all
+amine
+amp
+ample
+an
+aph
+aul
+awk
+e
+ea
+ee
+el
+em
+emp
+en
+ep
+epa
+h
+ha
+han
+hap
+he
+hei
+hell
+hem
+hen
+hi
+hin
+ho
+how
+howe
+ia
+ie
+ile
+imp
+in
+ion
+iou
+k
+keep
+kin
+l
+lan
+le
+lea
+li
+like
+line
+link
+ll
+ln
+lo
+lowe
+m
+mail
+man
+me
+men
+mi
+ml
+mo
+mp
+n
+name
+ne
+nee
+no
+non
+nu
+num
+o
+om
+on
+one
+op
+ope
+open
+owe
+own
+p
+pe
+pell
+people
+plea
+pu
+u
+ui
+ula
+ule
+ume
+ump
+un
+uni
+w
+wa
+wan
+we
+wh
+wha
+who
+wi
+wo
+
+
+
+------------ Miscellaneous notes to self ----------------
+
+tried using sed "s/`/'/g" in many different combinations but it didn't work
+
+
+Version 4ish: 
+grep '<td>.\{1,\}<\/td>' |
+sed 's/<td>//g' |
+sed 's/<\/td>//g' |
+sed 's/<u>//g' |
+sed 's/<\/u>//g' |
+tr '`' "'" |
+
+#need to delete every other line here before adding in the newlines
+# sed -n '1~2!p' |
+
+sed 's/,/\n/g' |
+sed 's/^ *//g' |
+sed 's/ /\n/g'
+
+
+
+
+Version 8ish:
+Was trying to do this without putting the regex between the ^ and $,
+not sure why this was not working though
+grep "^[pk\'mnwlhaeiou]\{1,\}$"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,20 @@
+Kubilay Agi
+UID: 304784519
+
+In the top left, we see the history of commits in a tree-like structure.
+Each node represents a commit, and each one has a commit message. This is
+a visualisation of the repository.
+
+In the top middle window, we see a list of people who made commits to the 
+repository and the email for each one.
+
+In the top right, we see the dates of each commit. These dates line up with the
+names of the authors of each commit so we can see when someone commited a 
+particular change.
+
+In the bottom right, there is a list of files that were changed by a particular
+commit. 
+
+In the bottom left, we see a screen that resembles a ChangeLog because it has
+the author, the date, the email, and the description of changes that were made
+to the files.

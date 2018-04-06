@@ -1,0 +1,111 @@
+Kubilay Agi
+304784519
+
+For the tr2b program, the implementation is pretty straight forward. We 
+first do the error checking to see if the arguments are of different
+length. If they are then we write to stderr. Next we go through each byte of
+the file and run a function that checks if the character should be replaced.
+If the character is found in the character array of letters we should replace,
+then the index of that character is returned and the corresponding character
+is printed out from the characters we need to replace others with.
+
+The tr2u implementation is identical for the error checking, so we just copy
+and paste that code over to the new file. When using read() and write(),
+I tried using just a character instead of an array to read the input and that
+did not work because read and write take a pointer. Instead, I used an 
+array of size 2 instead because I thought that you needed to inlcude the 
+nullbyte. However, it worked with an array of size 1 so I used that instead.
+
+When I was writing the character from the buffer, I would 
+dereference it with the [] operator, but the funciton takes a
+pointer instead of just a character so instead of using 
+[change], I used (to + change) so that the argument is a pointer
+
+To create a file of more than 5 million bytes, I used the command:
+
+head --bytes=5000000 /dev/urandom > file.txt
+
+The head command shows the first lines of a file, and the --bytes option
+specifies the number of bytes that it would show. This output is then put
+into file.txt to use for the testing of the two functions
+
+To test the program, we need to compile them:
+gcc -o tr2b tr2b.c
+gcc -o tr2u tr2u.c
+
+For the strace's we will use these commands:
+strace -o b_output ./tr2b 'abc' 'XYZ' < file.txt > strace.txt
+strace -o u_output ./tr2u 'abc' 'XYZ' < file.txt > strace.txt
+
+In b_output, we want to see the number of system calls that were
+made. Since each lines corresponds to one system call, we can use:
+
+wc -l b_output
+1252 b_output
+
+In u_output:
+
+wc -l u_output
+10000026 u_output
+
+Clearly, many more system calls are made with tr2u. Now we will look at
+the differences when we are writing to terminal:
+
+strace -o b_output ./tr2b 'abc' 'XYZ' < file.txt
+wc -l b_output
+20671 b_output
+
+strace -o u_output ./tr2u 'abc' 'XYZ' < file.txt
+wc -l u_output
+10000026 u_output
+
+From these, we can see that more system calls were made by tr2b when writing
+to the terminal as opposed to writing to a file. The number of system calls
+made by tr2u remained the same  betweenthe two  tests.
+
+To test the times for each of the programs when writing to the terminal,
+I used the following commands:
+
+time ./tr2b 'abc' 'XYZ' < file.txt
+time ./tr2u 'abc' 'XYZ' < file.txt
+
+I got a tremendous amount of output, for each one. At the very end, the output
+for the times were shown. (Someone should make a --silent option where all
+output is silenced except for the times...)
+
+For tr2b I got:
+
+real	 0m1.798s
+user	 0m0.388s
+sys	 0m0.094s
+
+and for tr2u I got:
+
+real	0m7.717s
+user	0m0.397s
+sys	0m7.271s
+
+Also, for some reason, the characters on my terminal window were messed up
+for a bit. For example, the bracket characterrs [ and ] were showing upa
+character A with accents on it. Emacs was alsoo malfunctionin. I am not
+exactly sure why this is, it is just something I noticed.
+
+Now we look at the programs when they are writing to files:
+
+time ./tr2b 'abc' 'XYZ' < file.txt > bout.txt
+
+real 0m0.289s
+user 0m0.236s
+sys  0m0.006s
+
+time ./tr2u 'abc' 'XYZ' < file.txt > uout.txt
+
+real 0m6.987s
+user 0m0.351s
+sys  0m6.591s
+
+From the differences in times, we can clearly see that the program with the
+system calls took much longer. When testing the time that these programs
+took to run, the results mirror that of the strace's. When the programs
+were writing to files, they made less (or equal) system calls than when they
+were writing to the terminal.

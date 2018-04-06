@@ -1,0 +1,690 @@
+UCLA CS35L
+
+09/28/17
+
+We need to buy the:
+Saeed Studio BeagleBone Green Wireless
+
+Logistics:
+50% homework
+50% final exam
+
+You should do all of the stuff from the linux server
+
+ssh kubilay@lnxsrv09.seas.ucla.edu
+
+
+Commands: 
+ls - shows contents of current directory
+
+cd directoryName - change directory
+
+cd .. - goes one directory back
+
+pwd - print working directory (shows path of the current directory from the root)
+
+You can change directories by writing out the whole path starting with ‘/‘ which is the root folder
+You can also change directories by writing a relative path without a starting ‘/‘
+
+cd ../.. - goes back two levels of directories
+
+using the tab key auto-completes the name that you’re typing if it can find a distinct name with that initial pattern
+
+You need to escape special characters with the ‘\’ so that the terminal can recognize that it is a literal space and not a separator for the values
+
+Up arrow shows the previous commands that you’ve typed in
+
+mv fileName.txt newDir/fileName.txt - this command moves the file into a folder with the same name as it originally had
+
+man commandName - shows the manual page for the command that you gave as an argument
+
+emacs - gives you a description of emacs and a manual - emacs is a text editor
+
+vim is another text editor
+
+clear - clears everything displayed in the terminal string
+
+echo “string” - echo is the equivalent of cout in c++ because it just prints to standard output
+
+cat fileName.txt - shows the content of a text file
+
+For hw: learn what these do:
+ls -l
+ls -r
+ls -t
+ls -lrt
+emacs (just how to use the text editor)
+
+
+
+10/03/17
+There are three types of files in a file system:
+Regular file (text file e.g.)
+Directory (special file that contains other files)
+Symbolic link
+
+File systems are like a tree and the / is the root
+
+Cd .. in the root directory points to itself
+
+Symbolic link - basically a short cut to a file
+
+ln -s  - this command creates a symbolic link
+
+If you open a symbolic link file, you see the original file
+
+If you modify the symbolic link, then the original file is also modified
+
+If you read a symbolic link, you read the target file
+
+If you remove/delete a symbolic link, the original file still exists
+
+If you change the name of the original file, you need to recreate the symbolic link because it still looks for a file with the old name
+
+mv name1.txt name2.txt   - the mv command is often used to change the name of files even within the same directory
+
+man commandName - shows the manual page for the command that you pass as an argument to the ‘man’ command
+
+To search in man pages: type ‘/‘ and then type whatever string you are looking for within that man page
+
+e.g. 
+man ls
+/file
+This searches for the keyword file in the ls man page
+
+Press q to exit the man page
+
+Press n to navigate forward in the man page after you’ve searched for something and press Caps lock and then n to navigate backwards
+
+whatis commandName - gives a short description of what the command does
+
+whatis = man -f
+
+apropros keyword - prints all of the man pages that have the keyword you are searching for inside of it
+
+Apropros = man -k
+
+After typing ls -l, the first character indicates the type of file that the file is 
+
+Directory is d
+Symbolic link is l
+Regular file is -
+
+Ls -l also shows the permissions of the file
+
+Linux supports multiple users on a system
+
+Permissions on a file specify which user can modify/read/execute a file
+
+File permissions in Linux:
+1. Each user belongs to a group
+	you can find out which groups you belong to by using the command: groups
+	whoami - tells you what user is logged in
+2. Each file needs to belong to both a user and to a group
+3. Each file has three separate permissions sets: for owner, user within a group, and other users
+	First three characters are the permissions for the owner
+	the next three characters are the permissions for the group
+	the last three characters are the permissions for the other users
+4. if the character in the string is:
+R - read permission
+W - write permission
+X - execute permission
+- a hyphen means that the user does not have a particular permission
+
+chmod - allows you to change permissions
+
+Pass the desired permissions as a three digit decimal number - each digit is translated into binary and the places in that number that have a 1, the permissions are granted and where it is a 0 the permissions are taken away:
+
+Ex: chmod 700 - gives owner rwx permissions, groups no permissions, and others no permissions
+chmod 761 - gives owner rwx permissions, groups have rw- permissions and others have --x permissions
+
+Execute permissions on a directory? Whether you can execute a command inside of the directory
+
+
+
+
+
+10/05/17
+locale - prints information about the current locale environment to standard output
+
+A locale is a set of parameters that define a user’s cultural preferences - language, country, other area-specific things
+
+Every user has a home directory assigned to it which can be displayed using:
+echo $HOME
+
+echo $PATH - shows you where the executables are searched for
+
+Scripts are interpreted and not compiled - lines run in order until there is an error in one of them, unlike c which needs all lines to be correct first
+
+Need to change the executable permission on the UCLA server because all files are by default not executable
+
+Environment:
+Locale gets its data from the LC_* 
+
+Sort: sort lines of text files, doesn’t change the contents of the file, it just sorts the file’s content and prints it out
+
+Comm - compares two files, but the two files should be sorted first
+First column of output shows things unique to first file
+Second column shows stuff that is unique to the second file
+The third column is the items that are shared in both 
+
+Tr - translate
+Ex: tr a-z A-Z
+Translates each character in the first argument in a one-to-one fashion with the characters in the second argument corresponding to the position that they were given in
+
+The shell is a user interface to the OS that accepts commands as text, interprets them, uses OS API to Carry out what the user wants - open files, start programs, etc…
+
+Common shells:
+Bash, sh, csh, ksh
+
+Any shell script needs one of these lines:
+#! /bin/sh
+#! /bin/bash
+
+The line depends on which shell you are currently using
+
+Trace the execution of a shell script:
+Set -x
+Set +x
+
+When using echo, if you want to give it special characters that you have to escape, you need to give it the -e option flag
+
+Printf can output data with complex formatting
+
+Variables can be declared using ‘=‘
+Ex: var=“hello”
+Note: there are no spaces in the declaration, but you can have as many spaces as you want in the string
+Referenced using $
+Ex: echo $var
+
+Control-r: allows you to search in your history for a keyword that you know the old command has
+You can traverse through the search results by repeatedly pressing control-r
+
+You can reference the arguments that you pass to the executable by using $# where # is replaced with the number of the argument:
+Ex: $0 references the file name that was executed
+$1 references the first argument passed
+$2 etc..
+
+If you have double digit number of arguments passed to it, you need to surround the number with {}:
+Ex: ${10}
+
+Control flow:
+If statements:
+use the test command or []
+Use man test to see the expressions that can be done
+
+Ex:
+If [ 1 -gt 5 ]
+	echo “laskalsdf”
+else
+	echo “asldkfjlas”
+
+Three kinds of quotes:
+Single quotes - does not expand anything, prints stuff out literally
+Double quotes - expands the variables that are put in strings with their value (expands backpacks and $)
+Back ticks - expand as shell commands
+Ex: temp=`ls`
+Echo $temp 
+This shell script acts in the same way as the ls command because back ticks expand shell commands
+
+While loops
+COUNT=6
+While [ $COUNT -gt 0 ]
+Do
+	echo “askdfh”
+	let COUNT = COUNT - 1
+Done
+
+The let command is used to do arithmetic
+
+For loops
+temp=`ls`
+For f in $temp
+do
+	echo $f
+done
+
+F will refer to each word in ls output
+
+In shell scripting, you need to use proper indentation to show that something is a subunit of execution
+
+Redirection and Pipelines
+Program < file - use file as input to program
+Program > file - write output of program to file
+
+Grep is used to search for things in combination with regular expressions
+
+Sed command is used for find and replace
+
+Ex:
+Sed ’s/regExpr/replText/[g]’
+
+
+
+10/10/2017
+Sort will sort the standard input alphabetically
+The -f flag will ignore the case differences
+The -k flag allows you to sort based on the column 
+(you can specify what its separated by with the -t flag: Ex: sort -t “;” -k 3)
+The -n flag sort based on numeric values
+The -r flag sorts in reverse order
+
+You will usually be using the -t and -k flags together
+
+The wc command is a word count, it can give you words, lines, and bytes
+
+Writing to files:
+The > operator will write to a file, if a file with the same name already exists, it will be deleted and replaced
+The >> operator will append to the end of a file if we already have a file with the same name
+
+To write to standard error instead of standard out:
+2>     this writes the error to a file
+2>>    this appends the error
+
+Grep searches for a pattern in a file, the pattern is in the form of a regular expression:
+Ex: grep regex filename
+
+REGEX examples:
+favou?rite
+This regex would match both favorite and favourite
+
+Go*gle
+This regex would match Ggle, Gogle, Google
+
+
+Regex (abc) looks for an exact match of the string on the inside
+You can pair this with the wildcard characters 
+
+Command to find subdirectories in a directory:
+Ls -l | grep ‘^d’
+
+
+Softlink vs Hardlink
+Softlink is a shortcut to a file, leads to the original file
+	if you delete the original file, the softlink disappears
+Hardlink is something that points to the same place on disk as the original file
+	the link is still valid after the original file is deleted
+
+To create a hardline, you use ln
+Command: ln fileName linkName
+To see which files the hard links point to, use ls -i to see the i-node number (which is original to each file, except for links)
+Use ln and ls -i for the homework
+
+
+10/12/17
+The ‘.’ Character often matches any single character except the newline character
+
+To search for files in a directory, use find instead of grep
+
+To compress files into a tarball:
+tar -czf file1 file2 file3
+
+To move files from place to place
+scp kubilay@lnxsrv07.seas.ucla.edu:~/Desktop/filename ~/Desktop/newFilename
+ 
+./configure will check all the files in your computer
+
+
+10/17/17
+Python: interpreted language
+
+Similar to C, not just a scripting language
+
+Argument: string entered on the command line and passed into the script
+
+Important data structure: list, similar to the C array
+But the lists are dynamic (expands when new items are added)
+Heterogenous - can hold objects of different types
+Elements are accessed in the same way
+
+You can also use negative numbers starting from -1 which gives you the last element
+If you keep going more and more negative, you get closer to the front
+
+Python dictionary - essentially a hash table (key-value pair storage
+
+Instantiation dict = {}
+Creates an empty dictionary
+
+Ex:
+dict = {}
+dict[‘hello’] = ‘world’
+Print dict[‘hello’]
+	=> world
+
+dict[‘power’] = 9001
+if (dict[‘power’] > 9000):
+	print ‘its over 9000’
+
+Python is very sensitive to tabs, the next line after the if statement needs
+To be indented
+
+For loops
+Ex:
+list = [1,2,3,4]
+for i in list:
+	print i
+
+for i in range(len(list)):
+	print i
+
+
+Python has no braces or keywords for code blocks
+
+Indentation changes the meaning of the code
+
+To run the python script:
+#!/usr/bin/python
+You need this line at the beginning of your python script to use this with bash
+
+Use the import keyword to import libraries to the code
+
+You need to define an entry point for the script:
+if __name__=="__main__":
+        main()
+
+def keyword is used to define functions 
+
+The set data structure is the same as the c++ set - ordered and unique elements
+S1 - s2 elements in s1 but not in s2
+S1 | s2 or operation
+S1 & s2 and operation
+S1 ^ s2 xor operation
+
+Typecasting in python:
+Basket = ['apple', 'orange', 'banana', 'apple', 'pear', 'apple']
+UniqueBasket = list(set(basket))
+
+This will give a list of unique items as a list
+
+Define a class using the class keyword
+
+Ex:
+Class Engine:
+	modelID=0
+	#constructor with a reference to self - like the ‘this’ pointer in c++
+	def __init__(self, ID):
+		self.modelID = ID
+
+	def printID(self):
+		print “engine id is”, self.modelID
+
+The first argument of a member function of the class must be ‘self’
+
+If a method name starts with 2 underscores, the method is private, other than that, it will be public
+
+it is the same with private members and private member functions as well
+
+
+10/19/17
+Programs in C:
+%d is integer
+%u is unsigned
+%s is string
+%f is float
+%c is character
+%x is hexadecimal
+
+You use malloc(numOfBytes) when you want to dynamically allocate space
+
+You use realloc(numOfBytes) to create a new size for an object
+
+Ex:
+char* str;
+Str = char* malloc(15);
+strcpy(str, “tutorialspoint”);
+printf(“string=%s, address=%u\n”, *str, str);
+Str = (char*) realloc(str, 25);
+printf(“string=%s, address=%u\n”, *str, str);
+free(str);
+
+free() is the same as delete in c++ - frees the allocated memory
+
+realloc() doesn’t move the variable to a different location in memory, it just adds onto the end of it
+
+Ex:
+int* a;
+a=(int*) malloc(4*sizeof(int));
+
+scanf() stops reading at whitespace
+gets() gets the whole line until a newline - only used for strings
+
+strcpy(s1, s2)
+strcat(s1, s2)
+strlen(s1)
+strcmp(s1, s2)
+
+Everything that starts with a ‘#’ is a macro - these are preprocessed,
+Aka replaced by other code that you want to use before executing the code
+
+When you have multidimensional arrays, only one of the sets of brackets can be left empty
+The other sets of brackets should have numbers in them
+
+sizeof(x) gives you the number of bytes allocated for x in memory
+
+
+10/24/17
+To run gdb: (gdb) run
+Or (gdb) run [arguments]
+
+To autocomplete use tab,
+Use help for help
+
+Use quit to quit
+
+Segmentation fault: line number where it crashed and parameters to the function that caused the error
+
+Use breakpoints to stop the program at a specific point, if the program gets there, then it will stop and let you know
+
+(Gdb) break file1.c:6 - to put a break at a line number
+(Gdb) break my_function to break every time the function is called
+(Gdb) break [position] if expression
+	if its true then it will put a break point at that place
+
+Use info breakpoints, br, b to get information about breakpoints
+
+To delete break points:
+d(gdb) delete [bpNumber | range]
+
+Gdb disable [bpnumber | range ]
+Gdb enable [bpnumber | ]
+Gdb ignore bpnumber iterations - where iterations is the number of times that the breakpoint is ignored
+
+Used to see data of interest at run time
+
+Print [/format] expression
+
+Formats
+D decimal
+x hex
+O octal
+T binary
+
+Resume execution:
+C or continue - keep running until next break
+S or step - debugger will go to next source line
+N or next will go to next line in current stack frame
+F or finish will resume execution until the current function returns, execution stops immediately after the program flow returns to the function caller
+Is and Ni have the same functionality, but these move to the next assembly line
+
+Watchpoints:
+
+Gdb watch my_variable
+	sets watchpoint
+	program stops when value of variable changes
+	old and new values will be printed
+
+Gdb rwatch expression
+	the debugger stops the program whenever the program reads the value of any object involved in the evolution of expression
+
+Gdb info frame displays info about the current stack frame including its return address and saved register values
+
+Info functions - lists all function sin the program
+
+Gdb list - lists source code lines around the current line
+
+
+10/16/17
+Int - 4 bytes
+Float - 4 bytes
+Double - 8 bytes
+
+Pointers store memory address:
+<variable_type> *<pointername> = &variable
+
+Pointers to pointers:
+**cPtrPtr = &cPtr
+*cPtr = &c
+Int c = 0;
+(Reverse this order)
+
+There are pointers to functions in C
+Function pointers or functors
+
+ex:
+double(*func_ptr)(double, double)
+func_ptr = [&]pow //funcptr points to pow()
+
+No classes in C, only structs
+
+You can use struct or typedef
+If you use struct, you need to declare things as struct Student s, typedef gets rid of this
+
+Typedef struct {
+
+} Student
+
+
+C structs don’t have constructors defined for them
+
+Dynamic memory
+Use void *malloc(size_t size);
+
+Void *realloc(void *ptr, size_t size);
+
+Void free(void* ptr)
+
+Returns the next character from stdin getchar()
+Writes a character to the current position in stdout: putchar(int character);
+
+Int fprintf(FILE * fp, const char * format, …);
+Int fscanf(File * fp, 
+
+Use 
+FILE* fp;
+Fp = fopen(“filename.txt”, “r” or “w”) to open a file
+fclose(fp); 
+
+Ex:
+FILE *fp;
+Char buff[255];
+Fp = fopen(fp, “r”);
+while(fscanf(fp, “%s”, buff) != EOF) {
+	printf(“%s”, buff);
+}
+fclose(fp);
+
+
+Gcc -E => result after the preprocessing
+Gcc -S => assembly code
+Gcc -o => object file
+
+Use this function to handle errors in the project
+
+Void readErr() {
+	if (ferror(stdin)) {
+		fprintf(stderr, “Error while reading file”);
+		exit();
+	}
+}
+
+
+10/31/17
+User mode has restricted access, kernel has unrestricted access
+Restricted mode - can only use certain areas of memory
+Kernel can use whatever memory it wants and take over cpu
+OS needs protection and fairness
+Gaols: IO, memory, cpu protection
+Kernel code is the only trusted code
+
+System calls:
+Special type of function that user level processes use to request a service from the kernel
+Changes cpu’s mode from user mode to kernel mode
+Verifies the the user should be allowed to do the requested action and then does the action
+Only way a user program can perform privileged function calls
+
+When the system call is made, the control is given to the kernel
+System calls are expensive
+
+Getchars, pitcher vs read and write
+fopen, fclose vs open close
+These functions make system calls indirectly
+
+Buffered io allows you to read blocks of memory so you use less system calls
+
+
+11/02/17
+Operating systems makes sure that the different processes don’t corrupt each other’s stuff
+Function calls have small overhead relative to making a system call
+This is because there is a process/context switching for system calls
+Library functions are designed to be wrappers around system calls
+Library functions use buffering to make less system calls on bigger things, makes it more efficient
+
+
+11/7/17
+Multiprocessing: multiple cores doing the same task at the same time
+
+Need multiple CPUs/cores to do this
+
+Multitasking: several processes are scheduled alternately or possibly simultaneously on a multiprocessing system
+
+Multithreading: several threads working on the same job
+
+Thread: flow of instructions in a process
+
+Process always consists of at least one thread
+
+Uniprocessor: context switching
+Multiprocessor: threads running at the same time
+
+Each thread has its own stack in multithreaded programming
+
+Processes communicate through system calls and pipes
+
+Threads share all of the processes memory except for the stacks
+
+Multithreaded programming is powerful, more efficient, non-trivial
+
+Export PATH=/usr/local/cs/bin:$PATH
+
+
+11/09/17
+
+Download single thread ray tracer
+Modify main.c and makefile 
+Run the multithreaded version 
+pthread_create - create a new thread and make it executable, return 0 if successful
+pthread_join - 
+pthread_equal - compares threads to see if they refer to the same thread
+pthread_self - returns id
+pthread_exit - terminates thread
+
+Parameters:
+Tid - thread id
+Attribute - attrivbutes, mostly pass in NULL
+my_func - a function you want to be parallel
+Arg  a single argument that may be passed to my function, if void args, pass null
+
+pthread_t tids[3];
+Everytime you pthread_Create, you need to check the return value
+
+Use pthread_join at the end of the function so you wait for all threads to finish
+
+Pthread join return value 0 success
+
+Arguments:
+Tid: thread to wait on
+Status: pass NULL
+
+Use for loop at the end of the program calling pthread join to wait for all threads
+
+

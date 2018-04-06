@@ -1,0 +1,131 @@
+Kubilay Agi
+304784519
+
+In this document, we will be looking at the various
+times that each program takes to run using the time 
+command. For these tests, I will be using a file called
+assign5.html which is the assignment 5 html page
+
+wget 'http://web.cs.ucla.edu/classes/fall17/cs35L/assign/assign5.html'
+mv assign5.html test.txt
+
+1. time ./sfrobu < assign5.html
+real	0m0.008s
+user	0m0.000s
+sys	0m0.007s
+
+2. time ./sfrobu -f < assign5.html
+real	0m0.008s
+user	0m0.000s
+sys	0m0.008s
+
+3. time ./sfrobs.sh < assign5.html
+real	0m0.255s
+user	0m0.183s
+sys	0m0.100s
+
+4. time ./sfrobs.sh -f < assign5.html
+real	0m0.255s
+user	0m0.156s
+sys	0m0.121s
+
+5. time ./sfrob < assign5.html
+real	0m0.004s
+user	0m0.000s
+sys	0m0.004s
+
+From these results, we can see that the buffered
+version of sfrob is the fastest. The way I wrote my 
+bash script might be affecting the speed of the 
+program because I generate the tr arguments using
+two for loops. Let hard code each of the strings into 
+the program to see the difference on the performance.
+
+After the changes:
+
+time ./sfrobs.sh < assign5.html
+real 0m0.006s
+user 0m0.003s
+sys  0m0.005s
+
+
+time ./sfrobs.sh -f < assign5.html
+real 0m0.006s
+user 0m0.001s
+sys  0m0.006s
+
+
+Clearly, it was the for-loops causing the delay in 
+time of computation.
+
+The assign5.html file was not that big, so now
+we will test them with a file of size 5MB
+
+head --bytes=5000000 /dev/urandom > big.txt
+
+
+1. time ./sfrobu < big.txt
+real	0m4.024s
+user	0m0.194s
+sys	0m3.792s
+
+2. time ./sfrobu -f < big.txt
+real	0m3.830s
+user	0m0.203s
+sys	0m3.583s
+
+3. time	./sfrobs.sh < big.txt
+real	0m1.042s
+user	0m0.026s
+sys	0m0.099s
+
+4. time ./sfrobs.sh -f < big.txt
+real	0m1.313s
+user	0m0.022s
+sys	0m0.103s
+
+
+A trend is appearing, which is that the shell
+script is the fastest. Obviously I am not as
+talented as the people writing the programs for
+bash.
+
+Next we will try running the programs on a file of
+size 50MB which we will call absurdlybig.txt
+
+1. time ./sfrobu < absurdlybig.txt
+real	0m43.217s
+user	0m2.241s
+sys	0m36.801s
+
+2. time ./sfrobu -f < absurdlybig.txt
+real	0m38.243s
+user	0m2.332s
+sys	0m35.470s
+
+3. time ./sfrobs.sh < absurdlybig.txt
+real	0m12.568s
+user	0m0.415s
+sys	0m2.704s
+
+4. time ./sfrobs.sh -f < absurdlybig.txt
+real	0m20.743s
+user	0m0.304s
+sys	0m0.955s
+
+
+We notice that the shell scipts are still faster.
+We should also consider that the seasnet server slowed
+down considerably during the time that I was testing these
+programs.
+
+From our data points, we can see that each value is a bit
+larger than 10x the value for the file that was 10x smaller.
+
+We know that the average run time for sorting is nlog(n),
+so this is my estimate for runtime because the programs that
+we wrote in C use qsort which is nlog(n) runtime, and the 
+shell version is likely similar. The total runtime is likely
+closer to nlog(n) + n, but since nlog(n) is the bigger term, 
+it absorbs the +n, and we are left with nlog(n) for average
+number of comparisons, where n is the number of lines.

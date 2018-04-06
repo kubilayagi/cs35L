@@ -1,0 +1,91 @@
+Kubilay Agi
+UID: 304784519
+
+To write the file with 10000000 single precision floating
+point numbers, I wrote a script that writes to a file:
+
+#!/bin/bash
+
+od -tf -N79999999 < /dev/urandom |
+cut -c 9- |
+tr ' ' '\n' |
+tr -s '\n' |
+head -n10000000 - > file.txt
+
+Now we will investigate the performance of the sort -g command
+by using:
+
+time -p sort -g file.txt
+
+From this command, we eventually get the following output after
+10000000 lines of sorted integers:
+real 108.98
+user 186.60
+sys 13.94
+
+It is important to keep in mind that the seasnet server
+was running somewhat slower than normal during the time 
+that I was running these commands.
+
+Hence, I will try running the command one more time to
+double check the times:
+real 63.80
+user 168.21
+sys 14.92
+
+The time was much faster here, but the server was running
+less slowly, so I will keep this set of data instead of the
+first one as my reference point.
+
+I wrote a script to run all of the tests back to back, and
+redirected the output of the time command to this file.
+These were the results of the test.
+
+parallel=1
+real 203.62
+user 157.50
+sys 10.95
+
+parallel=2
+real 139.31
+user 161.50
+sys 10.80
+
+parallel=4
+real 103.95
+user 162.35
+sys 10.92
+
+parallel=8
+real 90.13
+user 163.40
+sys 11.15
+
+
+I will run it once more so that we can make sure our data
+is not corrupted by the slow running server.
+
+parallel=1
+real 174.79
+user 161.19
+sys 10.61
+
+parallel=2
+real 102.70
+user 161.80
+sys 10.71
+
+parallel=4
+real 69.07
+user 165.65
+sys 10.60
+
+parallel=8
+real 46.97
+user 166.71
+sys 10.93
+
+Clearly, more using more threads makes the program
+faster. However, we do notice that the user time
+increases everytime we increase the number of threads
+that sort -g uses to sort the large file.

@@ -1,0 +1,116 @@
+Kubilay Agi
+9/28/17
+
+Linux and Emacs Scavenger Hunt
+
+1. You use the -k option to print the commands with a specific 
+word in their man page
+Example: man -k printf
+This command will print all the commands that have the 
+regular exression 'printf' in their man page
+
+2. The command 'cp' is in the directory: /usr/bin/cp
+The 'wc' command is in the directory: /usr/bin/wc
+
+3. ls /usr/bin/?
+three executables show up
+/usr/bin/w
+/usr/bin/X
+/usr/bin/]
+
+w - shows who is logged in and what they are doing
+
+] - bash built in command
+
+X - this returned that there was no entry for 'X' in the man pages,
+I looked into why this was true and it is because in 2009, X was changed to Xorg
+Because I was using the lnxsrv09 server, this update had already taken place
+
+Xorg - a portable window system 
+
+4. to find out which command is executed we use readlink:
+command: readlink /usr/bin/emacs
+/etc/alternatives/emacs
+this is the file that is actually run
+
+5. g+s sets groups ID on execution
+o-x takes away execute permission from people other
+than the owner and members of the file's group
+
+6. -mtime -21
+
+7. find / -mtime -21 -type d -ls
+
+8. find /usr/bin/ -type l -ls | wc -l
+293 of these files are symbolic links
+
+9. man ls
+cd /usr/lib
+ls -lt
+
+-rwxr-xr-x   1 root root   18692 Jan 26  2014 libgpg-error.so.0.10.0
+libgpg-error.so.0.10.0 is the oldest file in the directory /usr/lib
+
+10. man locale
+man -k locale
+man localedef
+
+locale prints out environment vairables
+
+the locale command gets its data from localedef
+
+11. C-h a sort
+
+Buffer-menu-sort              M-x ... RET
+   Sort Tabulated List entries by the column at point.
+sort-columns                  M-x ... RET
+   Sort lines in region alphabetically by a certain range of columns.
+sort-fields                   M-x ... RET
+   Sort lines in region lexicographically by the ARGth field of each
+   line.
+sort-lines                    M-x ... RET
+   Sort lines in region alphabetically; argument means descending
+   order.
+sort-numeric-fields           M-x ... RET
+   Sort lines in region numerically by the ARGth field of each line.
+sort-pages                    M-x ... RET
+   Sort pages in region alphabetically; argument means descending
+   order.
+sort-paragraphs               M-x ... RET
+   Sort paragraphs in region alphabetically; argument means descending
+   order.
+sort-regexp-fields            M-x ... RET
+   Sort the text in the region region lexicographically.
+tabulated-list-col-sort       M-x ... RET
+   Sort Tabulated List entries by the column of the mouse click E.
+tabulated-list-sort           M-x ... RET
+   Sort Tabulated List entries by the column at point.
+
+12. command to find stuff:
+emacs
+C-h r
+(hit enter on key index)
+
+C-M-a: Move to beginning of current or preceding defun
+C-M-b: Move backward over a balanced expression
+C-M-c: Exit the inner recursive edit
+C-M-d: Move down in the parentheses structure
+C-M-e: Move to end of current or following defun
+C-M-f: Move forward over a balanced expression
+C-M-g: Does not exist
+C-M-h: Put region around whole current or following defun
+
+13. C-g cancels a command before it finishes executing
+This gets rid of a partially typed command or bad numeric argument
+This command sets the quit flag to 't' which is recognize by an emacs check
+Once this flag is 'non-nil' the program stops running
+
+Looked in the emacs Key Index for the answer
+
+14. C-h f yank
+
+Reinserts the last stretch of killed text
+
+15. The dired command in emacs shows hidden files that ls does not.
+The dired command is also interactice, letting you perform actions on files
+and navigate through the filesystem.

@@ -1,0 +1,26 @@
+2017-10-27  Kubilay Yucel Agi  <kubilay@lnxsrv07.seas.ucla.edu>
+
+	* lib/timespec.h (timespec_cmp):
+	        Compare the values instead of subtracting them
+	        to avoid issues with integer overflow from times
+	        which are very far in the past.
+
+--- coreutils/coreutils-with-bug/lib/timespec.h	2017-10-26 16:45:38.475276000 -0700
++++ coreutils/coreutils-with-bug/lib/timespec.h 2017-10-26 17:01:40.184310000 -0700
+@@ -45,8 +45,14 @@
+ static inline int
+ timespec_cmp (struct timespec a, struct timespec b)
+ {
+-  int diff = a.tv_sec - b.tv_sec;
+-  return diff ? diff : a.tv_nsec - b.tv_nsec;
++  if (a.tv_sec > b.tv_sec) {
++    return 1;
++  }
++  else if (a.tv_sec < b.tv_sec) {
++      return -1;
++  }    
++  else
++    return 0;
+ }
+ 
+ # if ! HAVE_DECL_NANOSLEEP

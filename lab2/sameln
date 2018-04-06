@@ -1,0 +1,116 @@
+#!/bin/bash
+
+#read the argument as the directory name
+dir=$1
+
+DOT=`ls -a $dir | grep "^\..*" | sort`
+REG=`ls $dir | sort`
+
+#declares an array
+declare -a ARRAY
+
+#this is just incase there are files with space separated names
+savedIFS="$IFS"
+IFS=$'\n'
+
+#change the value of a variable
+COUNT=1
+let count=0
+
+#get all of the .files
+for FILE in $DOT
+do
+	if [ -L "$dir/$FILE" ]
+	then
+		:
+	elif [ -d "$dir/$FILE" ]
+	then
+		:
+	elif [ ! -r "$dir/$FILE" ]
+	then
+		echo "$FILE cannot be read"
+	else
+		if [ -f "$dir/$FILE" ]
+		then
+
+			ARRAY[$count]="$dir/$FILE"
+			let count=count+1
+		else
+			:
+		fi
+	fi
+done
+
+#get all the other files
+for FILE in $REG
+do
+        if [ -L "$dir/$FILE" ]
+        then
+                :
+        elif [ -d "$dir/$FILE" ]
+        then
+                :
+	elif [ ! -r "$dir/$FILE" ]
+	then
+		echo "$FILE cannot be read"
+        else
+                if [ -f "$dir/$FILE" ]
+                then
+                        ARRAY[$count]="$dir/$FILE"
+                        let count=count+1
+                else
+                       :
+                fi
+        fi
+done
+
+
+pos=0
+counter=0
+
+#create links if the files are equal
+for (( i=0; i<$count; i++ )); do
+	#start one ahead of the file you are checking against
+	for(( j=i+1; j<$count; j++ )); do
+		#compare the two files and check the error code
+		cmp -s "${ARRAY[$i]}" "${ARRAY[$j]}"
+		if [ $? -eq 0 ]
+		then
+			#create the link forcefully
+			ln -fP "${ARRAY[$i]}" "${ARRAY[$j]}"
+			ARRAY[$j]=ARRAY[$i]	
+		fi
+	done
+done
+
+#restore the separation character
+IFS=$restore
+
+
+#create the path from root directory
+#pathname=`realpath $dir`
+
+#get a list of all the items in the directory
+#ARR=`find $pathname -maxdepth 1 -type f`
+
+#ls automatically gives alphabetically sorted output to ARR
+#store the word count of the current file being looked at
+#compare it to other files with the same word count
+#use comm for this and check that there are no words 
+#in the first or second columns
+#if they are the same:
+#store the name of the files that are the same
+#sort based on putting periods first
+#remove the files you are deleting
+#create a hardlink to the file you are keeping
+#to find the word count of a file:
+# wc -w filename | sed 's/ .*//'
+
+
+
+
+
+
+
+
+

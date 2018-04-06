@@ -1,0 +1,155 @@
+Kubilay Agi
+UID: 304784519
+
+1. emacs hw9.txt
+
+2. To check out v3.0, we use the following commands:
+
+cd gitroot/diffutils
+git checkout 'v3.0' -b 'quote'
+
+3. Now we will apply our patch that we made for the lab portion
+to the recently checked out v3.0 branch
+ 
+patch -p1 < quote-3.0-patch.txt 
+patching file src/cmp.c
+Reversed (or previously applied) patch detected!  Assume -R? [n] y
+patching file src/diff.c
+Reversed (or previously applied) patch detected!  Assume -R? [n] y
+patching file src/diff3.c
+Reversed (or previously applied) patch detected!  Assume -R? [n] y
+patching file src/dir.c
+Reversed (or previously applied) patch detected!  Assume -R? [n] y
+patching file src/sdiff.c
+Reversed (or previously applied) patch detected!  Assume -R? [n] y
+patching file src/util.c
+Reversed (or previously applied) patch detected!  Assume -R? [n] y
+
+the reason there are warnings here is because I tried patching it
+before, but it froze. So I quit and tried it again, but some of 
+the patches had already been applied. We do not need to worry about
+these warnings.
+
+4. I opened emacs and typed C-x 4 a to see what the function does.
+It opens a change log entry for me to edit.
+
+5. To create our own change log for this project, we use:
+emacs
+C-x 4 a
+
+Then I got the message from the commit that professor Eggert made
+about the quotes, and I used this message as the body of my own
+change log.
+
+6. To commit changes, we do the following.
+git add .
+
+Now we will commit the files, because we staged them with git add .
+In order to do this, we need the -a and -F option flags because
+we want all of our staged files to be committed (-a) and we want to
+use our ChangeLog as the message for the commit (-F)
+
+git commit -aF ChangeLog
+[quote ae6643a] 2017-12-01  Kubilay Yucel Agi  <kubilay@lnxsrv09.seas.ucla.edu>
+ Committer: Kubilay Yucel Agi <kubilay@lnxsrv09.seas.ucla.edu>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly:
+
+    git config --global user.name "Your Name"
+    git config --global user.email you@example.com
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 7 files changed, 6351 insertions(+)
+ create mode 100644 quote-3.0-patch.txt
+ create mode 100644 src/cmp.c.orig
+ create mode 100644 src/diff.c.orig
+ create mode 100644 src/diff3.c.orig
+ create mode 100644 src/dir.c.orig
+ create mode 100644 src/sdiff.c.orig
+ create mode 100644 src/util.c.orig
+
+ Committer: Kubilay Yucel Agi <kubilay@lnxsrv09.seas.ucla.edu>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly:
+
+    git config --global user.name "Your Name"
+    git config --global user.email you@example.com
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 6 files changed, 37 insertions(+), 37 deletions(-)
+
+
+7. git format-patch -1 --stdout > formatted-patch.txt
+
+We use this to create our formatted patch file. This command automatically
+incorporates our ChangeLog into the message at the beginning of the formatted
+patch.
+
+8. To get each other's patches, we used scp to retrieve the file from the other
+person's account on the linux server. To get my partner, Baolinh's patch:
+
+scp baolinh@lnxsrv09.seas.ucla.edu:~/Desktop/CS35L/Assignment9/gitroot/quote-3.0-patch.txt ../..
+
+we got the wrong files so 
+scp baolinh@lnxsrv09.seas.ucla.edu:~/Desktop/CS35L/Assignment9/gitroot/formatted-patch.txt ..
+
+We just needed each other to type in our respective passwords so that the other person
+could retrieve the file.
+ 
+git checkout 'v3.0' -b 'partner'
+
+git am < formatted-patch.txt
+Applying: 2017-11-30 Baolinh Kianna Nguyen <baolinh@lnxsrv09.seas.ucla.edu>
+/u/cs/ugrad/kubilay/cs35L/lab9/gitroot/diffutils/.git/rebase-apply/patch:30: trailing whitespace.
+ 
+/u/cs/ugrad/kubilay/cs35L/lab9/gitroot/diffutils/.git/rebase-apply/patch:1116: trailing whitespace.
+ 
+/u/cs/ugrad/kubilay/cs35L/lab9/gitroot/diffutils/.git/rebase-apply/patch:1119: space before tab in indent.
+ 									        || (e == LONGINT_INVALID_SUFFIX_CHAR && **argptr == delimiter))
+/u/cs/ugrad/kubilay/cs35L/lab9/gitroot/diffutils/.git/rebase-apply/patch:1127: space before tab in indent.
+ 									         _("SKIP values may be followed by the following multiplicative suffixes:\n\
+/u/cs/ugrad/kubilay/cs35L/lab9/gitroot/diffutils/.git/rebase-apply/patch:1132: space before tab in indent.
+ 									         _("Exit status is 0 if inputs are the same, 1 if different, 2 if trouble."));
+warning: squelched 75 whitespace errors
+warning: 80 lines add whitespace errors.
+
+There are some warnings here, but they don't seem to concern the actual source code,
+so we will ignore them, and try to see if the patch works regardless.
+
+I ran the commands to make the stuff from README-hacking that we did earlier
+for making the file:
+
+./bootstrap
+
+To verify that Baolinh's patch worked, I ran the same command that I ran for mine:
+
+diff . -
+diff: cannot compare '-' to a directory
+
+As we can see, the quotes that are bring printed are the correct '' and not ``
+which means that her patch worked as well
+
+9. In the folder that was created from running
+make distdir
+
+I checked the ChangeLog, and the first entry has my name, which means that it worked!
+
+10. To get this to work, we open xTerm after downloading xquartz. Then we
+ssh into the linux server with the -X option so that we can enable X11
+forwarding in order to use the features of xquartz
+
+The we export our path to be the correct one:
+export PATH=/usr/local/cs/bin:$PATH
+
+Then we cd into the specified directory:
+cd ~eggert/src/gnu/emacs 
+
+Then we run gitk and we get a new window with the screen from gitk

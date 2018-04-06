@@ -1,0 +1,62 @@
+Kubilay Agi
+UID: 340784519
+
+To write the file with 10000000 single precision floating
+point numbers, I wrote a script that writes to a file:
+
+#!/bin/bash
+
+od -tf -N79999999 < /dev/urandom |
+cut -c 9- |
+tr ' ' '\n' |
+tr -s '\n' |
+head -n10000000 - > file.txt
+
+Now we will investigate the performance of the sort -g command
+by using:
+
+time -p sort -g file.txt
+
+From this command, we eventually get the following output after
+10000000 lines of sorted integers:
+real 108.98
+user 186.60
+sys 13.94
+
+It is important to keep in mind that the seasnet server
+was running somewhat slower than normal during the time 
+that I was running these commands.
+
+Hence, I will try running the command one more time to
+double check the times:
+real 63.80
+user 168.21
+sys 14.92
+
+The time was much faster here, but the server was running
+less slowly, so I will keep this set of data instead of the
+first one as my reference point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+0000000 -1.9023761319424662e-267   5.262575354803435e+221
+0000020 -1.0898539750217337e+248  3.4826572250645976e-281
+0000040   8.999336935185072e+291  -1.1725403038155037e+88
+0000060               2.671e-320
+0000062

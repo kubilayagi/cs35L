@@ -1,0 +1,324 @@
+Kubilay Agi
+UID: 304784519
+
+1. wget http://web.cs.ucla.edu/classes/fall17/cs35L/assign/coreutils-with-bug.tar.gz
+
+2. tar -xzvf coreutils-with-bug.tar.gz
+
+3. cd coreutils-with-bug/
+
+4. make
+
+We get a long stream of output, but we get an error before it returns.
+Becuase we get an error, we don't get the bin folder with the ls.c
+source code for us  to use.
+
+In file included from utimecmp.c:41:0:
+utimens.h:2:5: error: conflicting types for 'futimens'
+ int futimens (int, char const *, struct timespec const [2]);
+     ^
+In file included from utimecmp.h:25:0,
+                 from utimecmp.c:25:
+/usr/include/sys/stat.h:373:12: note: previous declaration of 'futimens' was here
+ extern int futimens (int __fd, const struct timespec __times[2]) __THROW;
+            ^
+
+From this, we can see that there are two instances of the function futimens
+which causes this error
+
+5. To fix this, we need to get the patch from the website:
+
+wget http://web.cs.ucla.edu/classes/fall17/cs35L/assign/coreutils.diff
+
+6. Since the paths for the file names need to be the same in the diff file,
+we need to delete the '~' at the end of some of the path names.
+
+For example:
+--- lib/utimens.c~       2005-11-02 04:16:12.000000000 -0800                                       
++++ lib/utimens.c       2010-01-26 12:20:13.292737899 -0800 
+
+should be changed to :
+--- lib/utimens.c       2005-11-02 04:16:12.000000000 -0800
++++ lib/utimens.c       2010-01-26 12:20:13.292737899 -0800 
+
+We run:
+patch -p0 < coreutils.diff
+
+from the coreutils-with-bug folder and the output tells us that
+
+patching file lib/utimens.c
+patching file lib/utimens.h
+patching file src/copy.c
+patching file src/tee.c
+patching file src/touch.c
+
+without giving any errors, which suggests that the patch was successful
+
+7. Now we run 'make' again, which runs without any errors this time,
+which means that the patch was successful
+
+And now we 'make install'
+
+8. We can see now that there is a bin directory containing the ls.c file
+and to see the bug, we need to change into the parent directory of coreutils
+so that we can use this ls command
+
+9. We write a script with the code given on the assignment page so we 
+don't have to type it over and over again to see the error. This also saves
+us some trouble for when we use GDB as the debugger for this code
+
+emacs lsbug.sh
+
+10. chmod u+x lsbug.sh
+We give ourselves executable permissions so we can run the file and
+observe the bug
+
+11. ./lsbug.sh
+-rw-r--r-- 1 kubilay csugrad 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice
+-rw-r--r-- 1 kubilay csugrad 0 2017-10-26 06:21:08.753740929 +0000 now1
+-rw-r--r-- 1 kubilay csugrad 0 2017-10-26 06:21:07.751713862 +0000 now
+
+Since ls -t is supposed to order the files by the most recently edited files
+at the top (found out from man ls, /t), we can see that the command is not
+functioning properly for files that are from very long ago because it is
+putting those at the top of the list, even though they were edited the
+least recently
+
+12. Becuase we are using the -t option, I searched inside of the ls.c source
+file for coreutils-with-bug to see if I could find something. I found a 
+variable named sort_time that appeared under the sort_files() function,
+so we should probably break at this function and step through to see what is 
+happeneing with the order that the files are sorted in:
+
+emacs coreutils/coreutils-with-bug/src/ls.c
+
+C-s -t
+
+13. Instead of simply running gdb with coreutils/bin/ls, we will put a gdb
+command inside of our file lsbug.sh so that the program runs gdb automatically
+before exiting  
+
+we put the command:
+gdb ~/cs35L/lab4/coreutils/bin/ls
+
+in our lsbug.sh so that it runs gdb before removing the tmp folder
+
+In gdb we do:
+
+(gdb) break sort_files
+(gdb) run -lt
+(gdb) s
+...
+
+2975 func = sort_reverse ? rev_cmp_mtime : compare_mtime;
+
+After we get to this line, the qsort function is called with the function
+that was chosen as a sorting method:
+
+3034    qsort (files, files_index, sizeof *files, func);
+
+After stepping over the compare_mtime function, I realised
+that we should probably look into that function because it simply
+passes over it otherwise. We want to look inside of this function
+to see what is going wrong
+
+So we run the program again:
+./lsbug.sh
+(gdb) break sort_files
+(gdb) run -lt
+(gdb) s
+...
+(gdb) break compare_mtime
+(gdb) s
+...
+
+We find that compare_mtime calls a function called cmp_mtime, so we
+should look at this function as well becuase that might be where the error
+is coming from:
+
+2884 static int compare_mtime (V a, V b) { return cmp_mtime (a, b, xstrcoll); }
+
+(gdb) break cmp_mtime
+(gdb) s
+...
+
+When we enter the cmp_mtime function, we see that there is a subtraction:
+timespec_cmp (b=..., a=...) at ../lib/timespec.h:48
+48 int diff = a.tv_sec - b.tv_sec;
+
+49 return diff ? diff : a.tv_nsec - b.tv_nsec;
+
+We want to look at the value of diff. After some googling, we find that to
+see the value of variables, we use info locals in gdb:
+
+(gdb) info locals
+diff = -1613826000
+
+Perhaps the value of diff is negative because of the ordering, but lets check
+the value of diff for comparing only two files that have been created 
+recently: 
+
+We comment out the line in lsbug.sh that creates the very old file
+
+We run it again and find that diff for the tv_sec comparison and tv_nsec
+are both positive.
+
+I then uncommented the command, but changed the year of wwi armistice to 2011
+to see if the file would still cause problems with a more recent year
+
+(gdb) info locals
+diff = 3
+(gdb) s
+49      return diff ? diff : a.tv_nsec - b.tv_nsec;
+(gdb) info locals
+diff = 1321009200
+
+(gdb) info locals
+diff = 3
+(gdb) s
+49      return diff ? diff : a.tv_nsec - b.tv_nsec;
+(gdb) info locals
+diff = 1509042006
+
+As we can see, diff is a positive number here.
+
+Becuase the difference in time between the files created now and the file
+that is dated as being created in 1918 is so long ago, measuring the
+difference in times between the files now and the file from 1918 would
+obviously lead to integer overflow, which explains this unexpected behavior.
+
+To come up with a solution for this issue, we can simply return -1 if the time
+of the variable a is less than that of variable b, a 0 if they are the same,
+and 1 if a's time is greater than b's time. This would avoid the issue of
+integer overflow which is caused when one file's time i smuch larger than the
+other file's. The order does not actually matter when subtracting two
+numbers that will lead to overflow becuase the behavior is not defined, so 
+it could result in a negative number or a positive number
+
+The file that we need to patch in order to fix this issue is the file that
+was output along with the gdb trace earlier in this lab report:
+
+timespec.h in the timespec_cmp function which is on line 48
+(We get all this information for this from our trace)
+
+We will want to edit the file by making a copy of it and then editing the copy,
+after we do that, we can use diff to create the patch for the actual file.
+
+cp coreutils/coreutils-with-bug/lib/timespec.h timespec.h
+
+Then we change the code of this to the code without possibility of overflow
+
+timespec_cmp (struct timespec a, struct timespec b)
+{
+  int diff = a.tv_sec - b.tv_sec;
+  return diff ? diff : a.tv_nsec - b.tv_nsec;
+}
+
+We change this to:
+
+[add this later]
+
+To create the lab4.diff file now, we need to use the diff
+commmand:
+
+diff coreutils/coreutils-with-bug/lib/timespec.h timespec.h > lab4.diff
+
+(We are missing the -u option here, I touch on this in a few lines)
+
+Then we create a change log so we have record and information about
+the change that we're making. We do this by:
+
+emacs
+C-x 4 a
+
+Then we change the names around so that we get a .diff file with the
+change log in it:
+
+mv lab4.diff patch.diff
+mv ChangeLog lab4.diff
+cat patch.diff >> lab4.diff
+
+When we try to run the patch:
+
+patch -p0 < lab4.diff
+
+We get the output:
+
+**** Only garbage was found in the input.
+
+After some research, I found that we need to use the -u option
+for the diff file to be in the correct format for the patch function
+to work properly and recognize the changes.
+
+We repeat the same process:
+
+emacs
+C-x 4 a
+mv lab4.diff patch.diff
+mv ChangeLog lab4.diff
+cat patch.diff >> lab4.diff
+
+Now we'll try again:
+patch -p0 < lab4.diff
+
+============ lab4.diff =========
+2017-10-27  Kubilay Yucel Agi  <kubilay@lnxsrv07.seas.ucla.edu>
+
+	* lib/timespec.h (timespec_cmp):
+	        Compare the values instead of subtracting them
+	        to avoid issues with integer overflow from times
+	        which are very far in the past.
+
+--- coreutils/coreutils-with-bug/lib/timespec.h	2017-10-26 16:45:38.475276000 -0700
++++ coreutils/coreutils-with-bug/lib/timespec.h 2017-10-26 17:01:40.184310000 -0700
+@@ -45,8 +45,14 @@
+ static inline int
+ timespec_cmp (struct timespec a, struct timespec b)
+ {
+-  int diff = a.tv_sec - b.tv_sec;
+-  return diff ? diff : a.tv_nsec - b.tv_nsec;
++  if (a.tv_sec > b.tv_sec) {
++    return 1;
++  }
++  else if (a.tv_sec < b.tv_sec) {
++      return -1;
++  }    
++  else
++    return 0;
+ }
+ 
+ # if ! HAVE_DECL_NANOSLEEP
+
+================================
+
+This time we get the output:
+patching file timespec.h
+
+Which is what we want to see. We now need to make again so we can test the
+patch to see if our solution worked.
+
+Then we:
+make
+
+Now we run our test script, but check the src version of ls this time, we get
+the correct output:
+
+-rw-r--r-- 1 kubilay csugrad 0 2017-10-28 01:11:31.5498016 +0000 now1
+-rw-r--r-- 1 kubilay csugrad 0 2017-10-28 01:11:30.5487745 +0000 now
+-rw-r--r-- 1 kubilay csugrad 0 1918-11-11 11:00:00.0000000 +0000 wwi-armistice
+
+(I had to truncate some of the nano seconds so that the output would fit in 
+the 80 character limit)
+
+To reproduce this on the linux machine, we:
+cd ~
+touch -d '1918-11-11 11:00 GMT' wwi-armistice
+ls -lt wwi-armistice
+
+Output:
+-rw-r--r-- 1 kubilay csugrad 0 Dec 17  2054 wwi-armistice
+
+The seasnet machine also cannot handle dates very far in the past.
+This is likely because the local linux file system uses unsigned integers
+to represent their dates and seasnet uses signed integers. When the integers
+are extended to 64 bit numbers, the unsigned ones seem higher as signed integers.
